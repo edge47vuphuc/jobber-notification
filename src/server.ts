@@ -2,6 +2,7 @@ import { winstonLogger } from '@edge47vuphuc/jobber-shared';
 import { config } from '@notifications/config';
 import { checkConnection } from '@notifications/elasticsearch';
 import { createConnection } from '@notifications/queues/connection';
+import { consumeAuthEmailMessages, consumeOrderEmailMessages } from '@notifications/queues/email.consumer';
 import { appRoutes } from '@notifications/routes';
 import { Channel } from 'amqplib';
 import { Application } from 'express';
@@ -21,6 +22,8 @@ export const start = (app: Application): void => {
 
 const startQueues = async (): Promise<void> => {
   const emailChannel: Channel = (await createConnection()) as Channel;
+  await consumeAuthEmailMessages(emailChannel);
+  await consumeOrderEmailMessages(emailChannel);
 };
 
 const startElasticSearch = (): void => {
